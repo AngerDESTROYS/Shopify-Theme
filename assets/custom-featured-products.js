@@ -1,12 +1,20 @@
-document.addEventListener("DOMContentLoaded", () => {
-  let isAddingToCart = false;
+class CustomFeaturedCollection extends HTMLElement {
+  constructor() {
+    super();
+    this.isAddingToCart = false;
+    document.addEventListener("DOMContentLoaded", this.render.bind(this));
+  }
 
-  function addToCart(variantId) {
-    if (isAddingToCart) {
+  render() {
+    this.bindAddToCartListeners();
+  }
+
+  addToCart(variantId) {
+    if (this.isAddingToCart) {
       return;
     }
 
-    isAddingToCart = true;
+    this.isAddingToCart = true;
 
     const itemData = {
       items: [
@@ -26,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(response => response.json())
     .then(cartData => {
-      fetchUpdatedSections();
+      this.fetchUpdatedSections();
       return fetch(`/?sections=cart-notification-product,cart-notification-button,cart-icon-bubble`)
         .then(response => response.json())
         .then(sectionData => {
@@ -46,17 +54,17 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error('Error adding item to cart:', error);
     })
     .finally(() => {
-      isAddingToCart = false;
+      this.isAddingToCart = false;
     });
   }
 
-  function bindAddToCartListeners() {
+  bindAddToCartListeners() {
     document.addEventListener('click', (event) => {
       const button = event.target.closest('.custom-collection__button');
       if (button) {
         const variantId = button.dataset.variantId;
         if (variantId) {
-          addToCart(variantId);
+          this.addToCart(variantId);
         } else {
           console.log("Variant ID is missing.");
         }
@@ -64,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function fetchUpdatedSections() {
+  fetchUpdatedSections() {
     fetch(`/?sections=custom-featured-products`)
       .then(response => response.json())
       .then(sectionData => {
@@ -75,6 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(error => console.error('Error fetching custom section:', error));
   }
+}
 
-  bindAddToCartListeners();
-});
+customElements.define("custom-featured-products", CustomFeaturedCollection);

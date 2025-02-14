@@ -2,41 +2,44 @@
 <script src="{{ 'custom-featured-products.js' | asset_url }}" defer></script>
 
 {%- assign cart_products = cart.items | map: 'product_id' -%}
+{% assign collection_handle = section.settings.collection.handle | default: 'frontpage' %}
 
-<div class="custom-section" data-section-id="{{ section.id }}" data-collection-handle="{{ section.settings.collection.handle }}">
-  <p class="custom-section__title">{{ section.settings.title }}</p>
+<custom-featured-products>
+  <div class="custom-section" data-section-id="{{ section.id }}" data-collection-handle="{{ section.settings.collection.handle }}">
+    <p class="custom-section__title">{{ section.settings.title }}</p>
 
-  {% assign collection = collections[section.settings.collection.handle] %}
+    {% assign collection = collections[collection_handle] %}
 
-  {% if collection.products.size > 0 %}
-  <div class="custom-collection">
-    <ul class="custom-collection__list">
-      {% for product in collection.products limit: section.settings.products_to_show %}
-        {% unless cart_products contains product.id %}
-          <li class="custom-collection__item" data-product-id="{{ product.id }}">
-            <a href="{{ product.url }}" class="custom-collection__link">
-              <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="custom-collection__image">
-              <h3 class="custom-collection__title">{{ product.title }}</h3>
-            </a>
-            <button class="custom-collection__button" data-variant-id="{{ product.variants.first.id }}">
-              Add to Cart 
-              <span class="custom-collection__price">
-                <span>{{ product.price | money }}</span>
-              </span>
-            </button>
-          </li>
-        {% endunless %}
-      {% endfor %}
-      <li class="custom-collection__filler"></li>
-      <li class="custom-collection__filler"></li>
-      <li class="custom-collection__filler"></li>
-    </ul>
+    {% if collection.products.size > 0 %}
+    <div class="custom-collection">
+      <ul class="custom-collection__list">
+        {% for product in collection.products limit: section.settings.products_to_show %}
+          {% unless cart_products contains product.id %}
+            <li class="custom-collection__item" data-product-id="{{ product.id }}">
+              <a href="{{ product.url }}" class="custom-collection__link">
+                <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="custom-collection__image">
+                <h3 class="custom-collection__title">{{ product.title }}</h3>
+              </a>
+              <button class="custom-collection__button" data-variant-id="{{ product.variants.first.id }}">
+                Add to Cart 
+                <span class="custom-collection__price">
+                  <span>{{ product.price | money }}</span>
+                </span>
+              </button>
+            </li>
+          {% endunless %}
+        {% endfor %}
+        <li class="custom-collection__filler"></li>
+        <li class="custom-collection__filler"></li>
+        <li class="custom-collection__filler"></li>
+      </ul>
+    </div>
+
+    {% else %}
+      <p>No products found in collection: {{ section.settings.collection.handle }}</p>
+    {% endif %}
   </div>
-
-  {% else %}
-    <p>No products found in collection: {{ section.settings.collection.handle }}</p>
-  {% endif %}
-</div>
+</custom-featured-products>
 
 {% schema %}
 {
@@ -51,8 +54,7 @@
     {
       "type": "collection",
       "id": "collection",
-      "label": "Select Collection",
-      "default": "frontpage"
+      "label": "Select Collection"
     },
     {
       "type": "range",
