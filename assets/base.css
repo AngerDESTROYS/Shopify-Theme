@@ -100,6 +100,18 @@ body:has(.section-header .drawer-menu) .announcement-bar-section .page-width {
   padding-right: 3rem;
 }
 
+@font-face {
+  font-family: 'Gothic A1';
+  src: url('{{ 'GothicA1-Medium.woff2' | asset_url }}') format('woff2'),
+       url('{{ 'GothicA1-Medium.woff' | asset_url }}') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Gothic A1', sans-serif;
+}
+
 @media screen and (min-width: 750px) {
   .page-width {
     padding: 0 5rem;
